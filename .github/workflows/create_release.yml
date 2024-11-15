@@ -32,18 +32,6 @@ jobs:
           git fetch
           git push
       
-      # Commit the updated Contents.m
-      - name: Update version.txt
-        continue-on-error: true
-        run: |
-          git config user.name "${{ github.workflow }} by ${{ github.actor }}"
-          git config user.email "<>"
-          git status
-          git add code/Contents.m
-          git commit -m "Final checkins for release ${{  github.ref_name }}"
-          git fetch
-          git push
-          
       # Retag the repo so that the updated files are included in the release tag
       - name: Update tag
         if: always()
