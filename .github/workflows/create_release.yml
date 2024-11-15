@@ -1,0 +1,61 @@
+name: Create new release
+
+# Run workflow when a tag is created
+on:
+  push:
+    tags: 
+      - 'v*'
+
+jobs:
+
+  codespell:
+    name: Check for spelling errors
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Codespell
+        uses: codespell-project/actions-codespell@v2
+
+      # Update the version.txt file with the new tag
+      - name: Update version.txt
+        run: |
+          echo "${{ github.ref_name }}" > version.txt
+          git config user.name "${{ github.workflow }} by ${{ github.actor }}"
+          git config user.email "<>"
+          git add version.txt
+          git commit -m "Update version.txt to ${{ github.ref_name }}"
+          git fetch
+          git push
+      
+      # Commit the updated Contents.m
+      - name: Update version.txt
+        continue-on-error: true
+        run: |
+          git config user.name "${{ github.workflow }} by ${{ github.actor }}"
+          git config user.email "<>"
+          git status
+          git add code/Contents.m
+          git commit -m "Final checkins for release ${{  github.ref_name }}"
+          git fetch
+          git push
+          
+      # Retag the repo so that the updated files are included in the release tag
+      - name: Update tag
+        if: always()
+        continue-on-error: true
+        run: |
+          git config user.name "${{ github.workflow }} by ${{ github.actor }}"
+          git config user.email "<>"
+
+          # Delete the existing tag locally and remotely
+          git tag -d "${{ github.ref_name }}" 
+          git push origin --delete "${{ github.ref_name }}"
+
+          # Recreate the tag with a message, including [skip ci] to prevent CI workflows
+          git tag -a "${{ github.ref_name }}" -m "Release ${{ github.ref_name }} [skip ci]" 
+
+          # Push the new tag to the remote repository
+          git push origin "${{ github.ref_name }}"
