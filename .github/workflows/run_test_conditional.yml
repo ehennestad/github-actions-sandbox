@@ -25,12 +25,12 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const response = await github.pulls.list({
+            const { data: pullRequests } = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
               head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`,
             });
-            return response.data.length > 0;
+            return pullRequests.length > 0;
           result-encoding: string
 
       - name: Skip if part of a PR
