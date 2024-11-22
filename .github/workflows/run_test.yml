@@ -27,5 +27,7 @@ jobs:
       # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
       - name: Check out repo
         uses: actions/checkout@v4
-      
 
+      # Print all environment variables
+      - name: Print Environment Variables
+        run: env
