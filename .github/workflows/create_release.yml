@@ -32,8 +32,13 @@ jobs:
           git config user.email "<>"
           git add version.txt
           git commit -m "Update version.txt to ${{ github.ref_name }}"
-          git fetch
-          git push
+          
+          # Fetch and pull latest changes to avoid conflicts
+          git fetch origin main
+          git pull origin main --rebase
+          
+          # Push the version.txt update to main
+          git push origin main
       
       # Retag the repo so that the updated files are included in the release tag
       - name: Update tag
@@ -53,7 +58,7 @@ jobs:
           git push origin --delete "${{ github.ref_name }}" || true
           
           # Recreate the tag at the latest commit with a message, including [skip ci] to prevent CI workflows
-          git tag -a "${{ github.ref_name }}" -m "Release ${{ github.ref_name }} [skip ci]" $LATEST_COMMIT
+          git tag -a "${{ github.ref_name }}" -m "Release ${{ github.ref_name }} [skip-ci]" $LATEST_COMMIT
           
           # Push the new tag to the remote repository
           git push origin "${{ github.ref_name }}"
