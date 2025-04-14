@@ -57,5 +57,7 @@ jobs:
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          draft: true        
+          draft: true
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           generateReleaseNotes: true
