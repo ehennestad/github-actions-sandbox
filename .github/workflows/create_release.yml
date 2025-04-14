@@ -37,21 +37,24 @@ jobs:
       
       # Retag the repo so that the updated files are included in the release tag
       - name: Update tag
-        if: always()
-        continue-on-error: true
         run: |
           git config user.name "${{ github.workflow }} by ${{ github.actor }}"
           git config user.email "<>"
-
-          git pull
-
+          
+          # Make sure we have the latest changes
+          git pull origin main --rebase
+          
+          # Get the latest commit hash (which should include the version.txt update)
+          LATEST_COMMIT=$(git rev-parse HEAD)
+          echo "Latest commit is $LATEST_COMMIT"
+          
           # Delete the existing tag locally and remotely
-          git tag -d "${{ github.ref_name }}" 
-          git push origin --delete "${{ github.ref_name }}"
-
-          # Recreate the tag with a message, including [skip ci] to prevent CI workflows
-          git tag -a "${{ github.ref_name }}" -m "Release ${{ github.ref_name }} [skip ci]" 
-
+          git tag -d "${{ github.ref_name }}" || true
+          git push origin --delete "${{ github.ref_name }}" || true
+          
+          # Recreate the tag at the latest commit with a message, including [skip ci] to prevent CI workflows
+          git tag -a "${{ github.ref_name }}" -m "Release ${{ github.ref_name }} [skip ci]" $LATEST_COMMIT
+          
           # Push the new tag to the remote repository
           git push origin "${{ github.ref_name }}"
     
