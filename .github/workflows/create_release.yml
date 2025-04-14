@@ -43,6 +43,8 @@ jobs:
           git config user.name "${{ github.workflow }} by ${{ github.actor }}"
           git config user.email "<>"
 
+          git pull
+
           # Delete the existing tag locally and remotely
           git tag -d "${{ github.ref_name }}" 
           git push origin --delete "${{ github.ref_name }}"
