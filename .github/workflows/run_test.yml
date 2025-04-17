@@ -21,13 +21,12 @@ jobs:
     name: Test ${{ env.TOOLBOX_NAME }}
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
     env:
       TOOLBOX_NAME: My Sandbox
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
+      # Checks out the repository under $GITHUB_WORKSPACE, so the job can access it
       - name: Check out repo
         uses: actions/checkout@v4
 
