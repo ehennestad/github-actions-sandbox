@@ -1,4 +1,4 @@
-name: Run range test [R2021b, R2024b]
+name: Run boundary test [R2021b, R2024b]
 
 on:
   push:
