@@ -18,7 +18,7 @@ jobs:
         if: ${{ inputs.matlab_release == 'latest' }}
         uses: matlab-actions/setup-matlab@v2
 
-      - name: Set up MATLAB (${{ inputs.matlab_release }})
+      - name: Set up MATLAB (${{ inputs.matlab_release == 'latest' && 'unspecified' || inputs.matlab_release }}
         if: ${{ inputs.matlab_release != 'latest'  }}
         uses: matlab-actions/setup-matlab@v2
         with:
