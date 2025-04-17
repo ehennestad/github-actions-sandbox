@@ -1,0 +1,25 @@
+name: Run tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      matlab_release:
+        required: false
+        type: string
+        default: 'latest'
+
+jobs:
+  install:
+    name: Test toolbox code
+    runs-on: ubuntu-latest
+
+    steps:  
+      - name: Set up MATLAB ('latest')
+        if: ${{inputs.matlab_release }} == 'latest'
+        uses: matlab-actions/setup-matlab@v2
+
+      - name: Set up MATLAB (${{ inputs.matlab_release }})
+        if: ${{ inputs.matlab_release }} != 'latest'
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          release: ${{ inputs.matlab_release }}
