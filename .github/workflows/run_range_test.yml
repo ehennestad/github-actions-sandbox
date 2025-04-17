@@ -1,4 +1,4 @@
-name: Run range test ${{ github.event.repository.name }}
+name: Run range test [R2021b, R2024b]
 
 on:
   push:
