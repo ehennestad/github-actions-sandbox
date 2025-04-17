@@ -1,4 +1,4 @@
-name: Run range test
+name: Run matrix test ${{ vars.TOOLBOX_NAME }}
 
 on:
   # Triggers the workflow on push to any branch other than main or PR to main
