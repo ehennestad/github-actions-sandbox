@@ -1,4 +1,4 @@
-name: Run tests
+name: Install MATLAB
 
 on:
   workflow_dispatch:
