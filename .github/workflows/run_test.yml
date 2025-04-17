@@ -15,14 +15,15 @@ on:
   # Allows for manually running this workflow from the Actions tab
   workflow_dispatch:
 
+env:
+  TOOLBOX_NAME: "My Sandbox"
+
 jobs:
   # This workflow contains a single job called "test"
   test:
     name: Test ${{ env.TOOLBOX_NAME }}
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    env:
-      TOOLBOX_NAME: My Sandbox
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
