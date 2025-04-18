@@ -19,6 +19,8 @@ on:
 
 jobs:
   cancel-non-latest:
+    name: Cancel non-latest run
+    runs-on: ubuntu-latest
     steps:
       - name: Cancel non-latest runs
         uses: styfle/cancel-workflow-action@0.12.1
