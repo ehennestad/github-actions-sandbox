@@ -24,6 +24,7 @@ concurrency:
 jobs:
 
   call-workflow-test-toolbox:
+    name: Test
     uses: ehennestad/matbox/.github/workflows/reusable_test_workflow.yml@add-reusable-test-workflow
     secrets:
       commit_email_address: ${{ secrets.COMMIT_EMAIL_ADDRESS }}
