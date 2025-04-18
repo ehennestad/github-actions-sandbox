@@ -1,4 +1,4 @@
-name: Run tests
+name: Call reusable test workflow
 
 on:
   # Triggers the workflow on push or pull request events for the "main" branch
@@ -18,6 +18,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  cancel-non-latest:
+    steps:
+      - name: Cancel non-latest runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          all_but_latest: true
+          access_token: ${{ github.token }}
+
   call-workflow-test-toolbox:
     uses: ehennestad/matbox/.github/workflows/reusable_test_workflow.yml@add-reusable-test-workflow
     secrets:
