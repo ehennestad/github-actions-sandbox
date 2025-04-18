@@ -17,16 +17,11 @@ on:
   # Allows for manually running this workflow from the Actions tab
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  cancel-non-latest:
-    name: Cancel non-latest run
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cancel non-latest runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          all_but_latest: true
-          access_token: ${{ github.token }}
 
   call-workflow-test-toolbox:
     uses: ehennestad/matbox/.github/workflows/reusable_test_workflow.yml@add-reusable-test-workflow
