@@ -1,0 +1,21 @@
+name: Run Codespell
+
+on:
+  push:
+    branches: [ "main" ]
+    
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  reuse-workflow-run-codespell:
+    name: Run Codespell
+    uses: ehennestad/matbox/.github/workflows/reusable_run_codespell.yml@add-reusable-test-workflow
+    with:
+      config_file: .codespellrc
+    secrets:
+      commit_email_address: ${{ secrets.COMMIT_EMAIL_ADDRESS }}
