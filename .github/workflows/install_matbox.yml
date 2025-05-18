@@ -1,0 +1,34 @@
+name: Install MATLAB
+
+on:
+  workflow_dispatch:
+    inputs:
+      matlab_release:
+        required: false
+        type: string
+        default: 'latest'
+
+jobs:
+  install:
+    name: Install MATLAB
+    runs-on: ubuntu-latest
+
+    steps:  
+      - name: Set up MATLAB (${{ inputs.matlab_release }})
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          release: ${{ inputs.matlab_release }}
+
+      - name: Install MatBox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            websave('installMatBox.m', 'https://github.com/ehennestad/Matlab-Toolbox-Template/raw/refs/heads/main/tools/tasks/installMatBox.m');
+            installMatBox()
+            delete('installMatBox.m')
+
+      - name: Confirm on path MatBox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            which('matbox.installRequirements')
