@@ -28,7 +28,7 @@ jobs:
       - name: List current
         run: ls
       - name: List work
-        run: ls /home/runner/work
+        run: ls /home/runner/work/_actions
 
       - name: Set up MATLAB (${{ inputs.matlab_release }})
         uses: matlab-actions/setup-matlab@v2
