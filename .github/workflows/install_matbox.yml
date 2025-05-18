@@ -22,14 +22,7 @@ jobs:
     name: Install MATLAB
     runs-on: ubuntu-latest
 
-    steps: 
-      - name: Show current
-        run: pwd
-      - name: List current
-        run: ls
-      - name: List work
-        run: ls /home/runner/work/_actions
-
+    steps:
       - name: Set up MATLAB (${{ inputs.matlab_release }})
         uses: matlab-actions/setup-matlab@v2
         with:
@@ -46,6 +39,3 @@ jobs:
           command: |
             location = which('matbox.installRequirements')
             assert(isempty(location), 'Failed to install MatBox.');
-
-
-
