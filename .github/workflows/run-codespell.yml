@@ -16,6 +16,6 @@ jobs:
     name: Run Codespell
     uses: ehennestad/matbox/.github/workflows/reusable_run_codespell.yml@add-reusable-test-workflow
     with:
-      config_file: .codespellrc
+      config_file: tools/.codespellrc
     secrets:
       commit_email_address: ${{ secrets.COMMIT_EMAIL_ADDRESS }}

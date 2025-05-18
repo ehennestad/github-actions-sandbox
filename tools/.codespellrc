@@ -1,0 +1,3 @@
+[codespell]
+skip = *.svg,*.yaml
+ignore-words-list = thsi
