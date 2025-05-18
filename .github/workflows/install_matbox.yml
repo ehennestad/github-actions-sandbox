@@ -29,7 +29,7 @@ jobs:
           release: ${{ inputs.matlab_release }}
 
       - name: Install MatBox
-        uses: ehennestad/matbox/.github/actions/install-matbox@4c54a93443b7c9ca21e5f937a0cf1b9c040aca27
+        uses: ehennestad/matbox/.github/actions/install-matbox@v1
         with:
           mode: ${{ inputs.install_mode }}
 
@@ -38,4 +38,4 @@ jobs:
         with:
           command: |
             location = which('matbox.installRequirements')
-            assert(isempty(location), 'Failed to install MatBox.');
+            assert(~isempty(location), 'Failed to install MatBox.');
