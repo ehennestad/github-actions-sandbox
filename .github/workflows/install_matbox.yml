@@ -20,7 +20,7 @@ jobs:
           release: ${{ inputs.matlab_release }}
 
       - name: Install MatBox
-        uses: ehennestad/matbox/.github/actions/install-matbox@2638b70
+        uses: ehennestad/matbox/.github/actions/install-matbox@a7782b9a8b1827ea69777f3ddbc23bf47a31c889
         with:
           mode: 'release'
 
