@@ -22,7 +22,11 @@ jobs:
     name: Install MATLAB
     runs-on: ubuntu-latest
 
-    steps:  
+    steps: 
+      - name: Show current
+        run: pwd
+      - name: List current
+        run: ls
       - name: List work
         run: ls /home/runner/work
 
@@ -32,7 +36,7 @@ jobs:
           release: ${{ inputs.matlab_release }}
 
       - name: Install MatBox
-        uses: ehennestad/matbox/.github/actions/install-matbox@70b72ec6ef04387d2a2db16d4106d700ad23b435
+        uses: ehennestad/matbox/.github/actions/install-matbox@11ea928c087a9f2316de951eafc3b97c002d98aa
         with:
           mode: ${{ inputs.install_mode }}
 
