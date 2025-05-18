@@ -14,7 +14,7 @@ concurrency:
 jobs:
   reuse-workflow-run-codespell:
     name: Run Codespell
-    uses: ehennestad/matbox/.github/workflows/reusable_run_codespell.yml@add-reusable-test-workflow
+    uses: ehennestad/matbox/.github/workflows/reusable/run_codespell.yml@add-reusable-test-workflow
     with:
       config_file: tools/.codespellrc
     secrets:
