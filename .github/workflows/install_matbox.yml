@@ -20,12 +20,9 @@ jobs:
           release: ${{ inputs.matlab_release }}
 
       - name: Install MatBox
-        uses: matlab-actions/run-command@v2
+        uses: ehennestad/matbox/.github/actions/install-matbox
         with:
-          command: |
-            websave('installMatBox.m', 'https://github.com/ehennestad/Matlab-Toolbox-Template/raw/refs/heads/main/tools/tasks/installMatBox.m');
-            installMatBox()
-            delete('installMatBox.m')
+          mode: 'release'
 
       - name: Confirm on path MatBox
         uses: matlab-actions/run-command@v2
