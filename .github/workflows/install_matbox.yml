@@ -44,6 +44,8 @@ jobs:
         uses: matlab-actions/run-command@v2
         with:
           command: |
-            which('matbox.installRequirements')
+            location = which('matbox.installRequirements')
+            assert(isempty(location), 'Failed to install MatBox.');
+
 
 
