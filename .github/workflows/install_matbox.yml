@@ -8,6 +8,15 @@ on:
         type: string
         default: 'latest'
 
+      install_mode:
+        description: 'Installation mode for MatBox (release or commit)'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - commit
+
 jobs:
   install:
     name: Install MATLAB
