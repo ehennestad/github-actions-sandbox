@@ -1,4 +1,4 @@
-name: Install MATLAB
+name: Install MatBox
 
 on:
   workflow_dispatch:
