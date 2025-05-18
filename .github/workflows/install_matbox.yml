@@ -40,5 +40,4 @@ jobs:
             which('matbox.installRequirements')
 
       - name: List work
-        uses: matlab-actions/run-command@v2
         run: ls /home/runner/work
