@@ -29,7 +29,7 @@ jobs:
           release: ${{ inputs.matlab_release }}
 
       - name: Install MatBox
-        uses: ehennestad/matbox/.github/actions/install-matbox@f5a91ae3c4625e7b0215608d57e562d2007cb465
+        uses: ehennestad/matbox/.github/actions/install-matbox@70b72ec6ef04387d2a2db16d4106d700ad23b435
         with:
           mode: ${{ inputs.install_mode }}
 
@@ -38,3 +38,7 @@ jobs:
         with:
           command: |
             which('matbox.installRequirements')
+
+      - name: List work
+        uses: matlab-actions/run-command@v2
+        run: ls /home/runner/work
