@@ -31,7 +31,7 @@ jobs:
       - name: Install MatBox
         uses: ehennestad/matbox/.github/actions/install-matbox@f5a91ae3c4625e7b0215608d57e562d2007cb465
         with:
-          mode: 'release'
+          mode: ${{ inputs.install_mode }}
 
       - name: Confirm on path MatBox
         uses: matlab-actions/run-command@v2
