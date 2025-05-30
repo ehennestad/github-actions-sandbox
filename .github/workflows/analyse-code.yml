@@ -16,6 +16,6 @@ jobs:
     name: Run code analyser
     uses: ehennestad/matbox/.github/workflows/reusable_check_code.yml@add-reusable-test-workflow
     with:
-      matlab_release: latest-including-prerelease
+      matlab_release: latest
     secrets:
       commit_email_address: ${{ secrets.COMMIT_EMAIL_ADDRESS }}
