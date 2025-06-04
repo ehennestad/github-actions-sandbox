@@ -27,6 +27,7 @@ jobs:
         uses: matlab-actions/setup-matlab@v2
         with:
           release: ${{ inputs.matlab_release }}
+          cache: true
 
       - name: Install MatBox
         uses: ehennestad/matbox/.github/actions/install-matbox@add-reusable-test-workflow
@@ -39,3 +40,12 @@ jobs:
           command: |
             location = which('matbox.installRequirements')
             assert(~isempty(location), 'Failed to install MatBox.');
+
+      - name: Check is secret
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            tf = isSecret("test");
+            [m,id] = lasterr()
+            disp(id)
+            
