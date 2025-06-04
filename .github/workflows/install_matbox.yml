@@ -45,7 +45,9 @@ jobs:
         uses: matlab-actions/run-command@v2
         with:
           command: |
-            tf = isSecret("test");
-            [m,id] = lasterr()
-            disp(id)
+            try
+                tf = isSecret("test");
+            catch ME
+                disp(ME.identifier)
+            end
             
