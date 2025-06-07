@@ -25,5 +25,6 @@ jobs:
 
       - name: test action
         uses: ehennestad/matbox/.github/actions/update-badges@make-release-workflow-reusable
+        continue-on-error: true
         with:
           version_number: '1.0.7'
