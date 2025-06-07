@@ -1,0 +1,14 @@
+{
+    "Namespace" : "ghas",
+    "ToolboxOptions": {
+        "Identifier": "dedfd78a-9fd1-4fca-9db3-f5eff64c7a99",
+        "ToolboxName": "SandBox",
+        "AuthorName": "Eivind Hennestad",
+        "AuthorEmail": "eivihe@uio.no",
+        "AuthorCompany": "",
+        "Summary": "A MATLAB toolbox to for CI testing",
+        "Description": "Does nothing",
+        "MinimumMatlabRelease": "R2022b",
+        "MaximumMatlabRelease": ""
+    }
+}
