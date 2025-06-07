@@ -20,7 +20,7 @@ jobs:
       ref_name: ${{ github.ref_name }}
       code_directory: 'code'
       tools_directory: 'tools'
-      matlab_versions: '["R2023a", "R2023b", "R2024a", "R2024b"]'
+      matlab_versions: '["R2023a", "R2024a", "R2024b"]'
       python_versions: '{"R2023a": "3.10", "R2023b": "3.11", "R2024a": "3.11", "R2024b": "3.12"}'
     secrets:
       DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
