@@ -1,0 +1,33 @@
+name: Test Validate Version Action
+
+on:
+  push:
+    tags: 
+      - 'v[0-9]+.[0-9]+.[0-9]+' # Matches tags like v1.2.3
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number in major.minor.patch format, i.e 0.9.x'
+        required: true
+        type: string
+
+jobs:
+  test-validate-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test validate version action
+        id: validate
+        uses: ehennestad/matbox/.github/actions/validate-version@make-release-workflow-reusable
+
+        with:
+          version: ${{ github.event.inputs.version }}
+          ref_name: ${{ github.ref_name }}
+
+      - name: Display results
+        run: |
+          echo "Validated version number: ${{ steps.validate.outputs.version_number }}"
+          echo "Input version: ${{ github.event.inputs.version }}"
+          echo "Input ref_name: ${{ github.ref_name }}"
