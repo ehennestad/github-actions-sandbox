@@ -8,7 +8,7 @@
         "AuthorCompany": "",
         "Summary": "A MATLAB toolbox to for CI testing",
         "Description": "Does nothing",
-        "MinimumMatlabRelease": "R2022b",
+        "MinimumMatlabRelease": "R2019a",
         "MaximumMatlabRelease": ""
     }
 }
