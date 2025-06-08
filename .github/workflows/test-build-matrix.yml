@@ -36,7 +36,7 @@ jobs:
         uses: ehennestad/matbox/.github/actions/build-test-matrix@make-release-workflow-reusable
         with:
           tools_directory: ${{ inputs.tools_directory }}
-          needs_python: ${{ inputs.needs_python }}
+          include_python: ${{ inputs.needs_python }}
           matlab_versions: ${{ inputs.matlab_versions }}
           python_versions: ${{ inputs.python_versions }}
           
