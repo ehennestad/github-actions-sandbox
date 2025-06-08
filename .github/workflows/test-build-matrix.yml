@@ -14,7 +14,17 @@ on:
       python_versions:
         description: 'JSON object mapping MATLAB versions to Python versions'
         required: false
-        default: '{"R2023a": "3.10", "R2023b": "3.11", "R2024a": "3.11", "R2024b": "3.12"}'
+        default: > 
+          '{
+            "R2021a": "3.8", 
+            "R2021b": "3.9", 
+            "R2022a": "3.9", 
+            "R2022b": "3.10", 
+            "R2023a": "3.10", 
+            "R2023b": "3.11", 
+            "R2024a": "3.11", 
+            "R2024b": "3.12"
+          }'
 
 jobs:
   test_build_matrix:
