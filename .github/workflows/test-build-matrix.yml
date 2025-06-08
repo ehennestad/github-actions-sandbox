@@ -7,24 +7,19 @@ on:
         description: 'Directory containing MLToolboxInfo.json'
         required: false
         default: 'tools'
-      matlab_versions_fallback:
-        description: 'Fallback MATLAB versions if auto-detection fails'
+      needs_python:
+        type: boolean
         required: false
-        default: '["R2023a", "R2023b", "R2024a", "R2024b"]'
+        default: false
+        description: 'Whether Python is needed for testing (controls if Python versions are included in test matrix)'
+      matlab_versions:
+        description: 'MATLAB versions (override detected versions from MLToolboxInfo)'
+        required: false
+        default: ''
       python_versions:
         description: 'JSON object mapping MATLAB versions to Python versions'
         required: false
-        default: > 
-          {
-            "R2021a": "3.8", 
-            "R2021b": "3.9", 
-            "R2022a": "3.9", 
-            "R2022b": "3.10", 
-            "R2023a": "3.10", 
-            "R2023b": "3.11", 
-            "R2024a": "3.11", 
-            "R2024b": "3.12"
-          }
+        default: ''
 
 jobs:
   test_build_matrix:
@@ -41,7 +36,8 @@ jobs:
         uses: ehennestad/matbox/.github/actions/build-test-matrix@make-release-workflow-reusable
         with:
           tools_directory: ${{ inputs.tools_directory }}
-          matlab_versions_fallback: ${{ inputs.matlab_versions_fallback }}
+          needs_python: ${{ inputs.needs_python }}
+          matlab_versions: ${{ inputs.matlab_versions }}
           python_versions: ${{ inputs.python_versions }}
           
       - name: Display results
