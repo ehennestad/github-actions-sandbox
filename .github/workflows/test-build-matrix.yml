@@ -1,0 +1,55 @@
+name: Test Build Matrix Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      tools_directory:
+        description: 'Directory containing MLToolboxInfo.json'
+        required: false
+        default: 'tools'
+      matlab_versions_fallback:
+        description: 'Fallback MATLAB versions if auto-detection fails'
+        required: false
+        default: '["R2023a", "R2023b", "R2024a", "R2024b"]'
+      python_versions:
+        description: 'JSON object mapping MATLAB versions to Python versions'
+        required: false
+        default: '{"R2023a": "3.10", "R2023b": "3.11", "R2024a": "3.11", "R2024b": "3.12"}'
+
+jobs:
+  test_build_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build_matrix.outputs.matrix }}
+      matlab_versions: ${{ steps.build_matrix.outputs.matlab_versions }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Build test matrix
+        id: build_matrix
+        uses: ehennestad/matbox/.github/actions/build-test-matrix@make-release-workflow-reusable
+        with:
+          tools_directory: ${{ inputs.tools_directory }}
+          matlab_versions_fallback: ${{ inputs.matlab_versions_fallback }}
+          python_versions: ${{ inputs.python_versions }}
+          
+      - name: Display results
+        run: |
+          echo "Generated MATLAB versions:"
+          echo '${{ steps.build_matrix.outputs.matlab_versions }}' | jq '.'
+          echo ""
+          echo "Generated test matrix:"
+          echo '${{ steps.build_matrix.outputs.matrix }}' | jq '.'
+          
+  test_matrix_usage:
+    needs: [test_build_matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.test_build_matrix.outputs.matrix) }}
+    steps:
+      - name: Display matrix values
+        run: |
+          echo "MATLAB Version: ${{ matrix.MATLABVersion }}"
+          echo "Python Version: ${{ matrix.pythonVersion }}"
