@@ -33,5 +33,5 @@ jobs:
         if: always()
         with:
           command: |
-            disp( getenv(DISPLAY) )
+            disp( getenv('DISPLAY') )
             f=uifigure();ax=uiaxes(f); plot(ax,1:10,1:10)
