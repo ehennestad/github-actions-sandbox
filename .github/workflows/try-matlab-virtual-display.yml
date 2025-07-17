@@ -1,0 +1,37 @@
+name: Try MATLAB with virtual display
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  test:
+    name: Try MATLAB with virtual display
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: 
+        MATLABVersion: [R2021a, R2021b, R2022a, R2022b, R2023a, R2023b, R2024a, R2024b]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Start virtual display server
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb :99 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      - name: Set up MATLAB (${{ matrix.MATLABVersion }})
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          release: ${{ matrix.MATLABVersion }}
+
+      - name: Run tests
+        uses: matlab-actions/run-command@v2
+        if: always()
+        with:
+          command: |
+            disp( getenv(DISPLAY) )
+            f=uifigure();ax=uiaxes(f); plot(ax,1:10,1:10)
