@@ -26,4 +26,5 @@ jobs:
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
         with:
           command: |
+            setenv("GITHUB_TOKEN", "${{ env.GITHUB_TOKEN }}")
             fprintf('GitHub token: %s\n', getenv("GITHUB_TOKEN"))
