@@ -22,7 +22,6 @@ jobs:
   # This workflow contains a single job called "test"
   test:
     name: Run MATLAB tests (release matrix)
-    needs: [validate_version, configure_test_matrix]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
