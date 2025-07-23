@@ -67,18 +67,18 @@ jobs:
   temp:
     name: Get reports
     runs-on: ubuntu-latest
-      steps:
-        - name: Download test reports
-          uses: actions/download-artifact@v4
-          with:
-            pattern: reports-*
-            path: docs/reports
-            merge-multiple: true
-        - name: Check reports
-          shell: bash
-          run: |
-            ls docs
-            ls docs/reports
+    steps:
+      - name: Download test reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: reports-*
+          path: docs/reports
+          merge-multiple: true
+      - name: Check reports
+        shell: bash
+        run: |
+          ls docs
+          ls docs/reports
 
   release:
     name: Package toolbox and create draft release
