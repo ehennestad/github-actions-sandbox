@@ -1,0 +1,44 @@
+name: Disk Info via MATLAB (Windows)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  disk-info:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        # Optional: pin a specific release
+        # with:
+        #   release: R2024a
+
+      - name: Run WMIC via MATLAB
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            cmd = ['wmic logicaldisk get DeviceId, ', ...
+                   'VolumeName, VolumeSerialNumber, FileSystem, Size, ', ...
+                   'DriveType' ];
+            [status, infoStr] = system(cmd);
+            fprintf('Status: %d\n', status);
+            disp(infoStr);
+            fid = fopen('logicaldisks.txt','w');
+            fprintf(fid,'%s', infoStr);
+            fclose(fid);
+            if status ~= 0
+              error('WMIC command failed with status %d', status);
+            end
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: logicaldisks
+          path: logicaldisks.txt
