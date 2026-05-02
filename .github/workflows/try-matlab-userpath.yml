@@ -1,0 +1,47 @@
+name: Try getting MATLAB userpath
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  test:
+    name: Try getting MATLAB userpath
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+
+      - name: Run userpath
+        uses: matlab-actions/run-command@v2
+        if: always()
+        with:
+          command: |
+             currentUserpath = userpath()
+             
+             temporaryUserpath = tempname;
+             if ~isfolder(temporaryUserpath); mkdir(temporaryUserpath); end
+             utility.filewrite(fullfile(temporaryUserpath,'test.txt'), 'test')
+             fprintf('Created temporary folder "%s"\n', temporaryUserpath)
+             
+             teardownObjects(end+1) = onCleanup(...
+                 @(pathName) deleteTemporaryUserPath(temporaryUserpath));
+             
+             %% Configure temporary userpath
+             currentUserpath = userpath();
+             fprintf('Current userpath is "%s"\n', currentUserpath)
+             userpath(temporaryUserpath)
+             fprintf('New userpath is "%s"\n', userpath)
+
+             [m,id] = lastwarn()
+             disp(id)
+
+             disp("Resetting userpath")
+             userpath("reset")
+
+             disp("Clearing userpath")
+             userpath("clear")
+
