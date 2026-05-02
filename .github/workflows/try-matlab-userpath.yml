@@ -24,7 +24,6 @@ jobs:
              
              temporaryUserpath = tempname;
              if ~isfolder(temporaryUserpath); mkdir(temporaryUserpath); end
-             utility.filewrite(fullfile(temporaryUserpath,'test.txt'), 'test')
              fprintf('Created temporary folder "%s"\n', temporaryUserpath)
              
              teardownObjects(end+1) = onCleanup(...
