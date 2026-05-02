@@ -26,8 +26,8 @@ jobs:
              if ~isfolder(temporaryUserpath); mkdir(temporaryUserpath); end
              fprintf('Created temporary folder "%s"\n', temporaryUserpath)
              
-             teardownObjects(end+1) = onCleanup(...
-                 @(pathName) deleteTemporaryUserPath(temporaryUserpath));
+             teardownObjects = onCleanup(...
+                 @(pathName) rmdir(pathName, "s"));
              
              %% Configure temporary userpath
              currentUserpath = userpath();
@@ -36,11 +36,9 @@ jobs:
              fprintf('New userpath is "%s"\n', userpath)
 
              [m,id] = lastwarn()
-             disp(id)
 
              disp("Resetting userpath")
              userpath("reset")
 
              disp("Clearing userpath")
              userpath("clear")
-
