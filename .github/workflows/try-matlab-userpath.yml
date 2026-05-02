@@ -27,7 +27,7 @@ jobs:
              fprintf('Created temporary folder "%s"\n', temporaryUserpath)
              
              teardownObjects = onCleanup(...
-                 @(pathName) rmdir(pathName, "s"));
+                 @() rmdir(pathName, "s"));
              
              %% Configure temporary userpath
              currentUserpath = userpath();
