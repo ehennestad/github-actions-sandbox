@@ -2,22 +2,37 @@ name: FlowReg set_path smoke test
 
 on:
   workflow_dispatch:
+  pull_request:
+  push:
 
 jobs:
   set-path:
-    name: MATLAB ${{ matrix.matlab-release }}
-    runs-on: macos-14
+    name: MATLAB ${{ matrix.matlab-release }} on ${{ matrix.runner }}
+    runs-on: ${{ matrix.runner }}
 
     strategy:
       fail-fast: false
       matrix:
-        matlab-release:
-          - R2023a
-          - R2023b 
-          - R2024a
-          - R2024b      
-          - R2025a
-          - R2025b
+        include:
+          - matlab-release: R2023b
+            runner: macos-14
+            xcode: /Applications/Xcode_15.4.app
+
+          - matlab-release: R2024a
+            runner: macos-14
+            xcode: /Applications/Xcode_15.4.app
+
+          - matlab-release: R2024b
+            runner: macos-15
+            xcode: /Applications/Xcode_16.4.app
+
+          - matlab-release: R2025a
+            runner: macos-15
+            xcode: /Applications/Xcode_16.4.app
+
+          - matlab-release: R2025b
+            runner: macos-15
+            xcode: /Applications/Xcode_16.4.app
 
     steps:
       - name: Check out FlowReg
@@ -25,6 +40,16 @@ jobs:
         with:
           repository: FlowRegSuite/flow_registration
           path: flow_registration
+
+      - name: Select Xcode
+        run: sudo xcode-select -s "${{ matrix.xcode }}"
+
+      - name: Show compiler environment
+        run: |
+          sw_vers
+          xcodebuild -version
+          xcrun --find clang++
+          clang++ --version
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
@@ -36,9 +61,14 @@ jobs:
         with:
           command: |
             cd(fullfile(getenv("GITHUB_WORKSPACE"), "flow_registration"));
-            disp(version);
-            disp(computer("arch"));
+
+            fprintf("MATLAB version: %s\n", version);
+            fprintf("Architecture: %s\n", computer("arch"));
+            fprintf("MEX extension: %s\n", mexext);
+
             mex -setup C++;
             set_path;
-            assert(exist(fullfile("core", ["level_solver." mexext]), "file") == 2, ...
-                "Expected level_solver MEX file was not created.");
+
+            mexFile = fullfile("core", ["level_solver." mexext]);
+            assert(exist(mexFile, "file") == 2, ...
+                "Expected level_solver MEX file was not created: %s", mexFile);
