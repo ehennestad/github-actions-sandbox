@@ -67,6 +67,6 @@ jobs:
             mex -setup C++;
             set_path;
 
-            mexFile = fullfile("core", ["level_solver." mexext]);
+            mexFile = fullfile("core", "level_solver." + mexext);
             assert(exist(mexFile, "file") == 2, ...
                 "Expected level_solver MEX file was not created: %s", mexFile);
