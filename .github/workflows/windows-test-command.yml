@@ -2,10 +2,7 @@ name: Disk Info via MATLAB (Windows)
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-
+  
 jobs:
   disk-info:
     runs-on: windows-latest

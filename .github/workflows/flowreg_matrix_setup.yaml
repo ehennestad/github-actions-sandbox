@@ -68,5 +68,5 @@ jobs:
             set_path;
 
             mexFile = fullfile("core", "level_solver." + mexext);
-            assert(exist(mexFile, "file") == 2, ...
+            assert(isfile(mexFile), ...
                 "Expected level_solver MEX file was not created: %s", mexFile);
