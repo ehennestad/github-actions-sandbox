@@ -11,26 +11,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        matlab-release:
+          - R2023b
+          - R2024a
+          - R2024b
+          - R2025a
+          - R2025b
+        runner:
+          - macos-14
+          - macos-15
+          - macos-26
         include:
-          - matlab-release: R2023b
-            runner: macos-14
+          - runner: macos-14
             xcode: /Applications/Xcode_15.4.app
 
-          - matlab-release: R2024a
-            runner: macos-14
-            xcode: /Applications/Xcode_15.4.app
-
-          - matlab-release: R2024b
-            runner: macos-15
+          - runner: macos-15
             xcode: /Applications/Xcode_16.4.app
 
-          - matlab-release: R2025a
-            runner: macos-15
-            xcode: /Applications/Xcode_16.4.app
-
-          - matlab-release: R2025b
-            runner: macos-15
-            xcode: /Applications/Xcode_16.4.app
+          - runner: macos-26
+            xcode: /Applications/Xcode.app
 
     steps:
       - name: Check out FlowReg
