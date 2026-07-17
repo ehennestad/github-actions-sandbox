@@ -33,7 +33,7 @@ jobs:
         
       - name: Build test matrix
         id: build_matrix
-        uses: ehennestad/matbox/.github/actions/build-test-matrix@make-release-workflow-reusable
+        uses: ehennestad/matbox-actions/configure-matlab-test-matrix@v1
         with:
           tools_directory: ${{ inputs.tools_directory }}
           include_python: ${{ inputs.needs_python }}

@@ -14,12 +14,14 @@ on:
 
 jobs:
   release:
-    uses: ehennestad/matbox/.github/workflows/reusable_release_workflow.yml@make-release-workflow-reusable
+    uses: ehennestad/matbox-actions/.github/workflows/prepare-release-workflow.yml@v1
     with:
       version: ${{ github.event.inputs.version }}
       ref_name: ${{ github.ref_name }}
-      code_directory: 'code'
+      source_directory: 'code'
+      tests_directory: 'tools/tests'
       tools_directory: 'tools'
+      needs_python: true
       matlab_versions: '["R2023a", "R2024a", "R2024b"]'
       python_versions: '{"R2023a": "3.10", "R2023b": "3.11", "R2024a": "3.11", "R2024b": "3.12"}'
     secrets:
