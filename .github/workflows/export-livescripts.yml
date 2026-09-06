@@ -50,6 +50,8 @@ jobs:
             fprintf("export resolves to: %s\n", which("export"));
             sources = dir(fullfile("livescripts", "*.mlx"));
             assert(~isempty(sources), "No live scripts found");
+            targetFolder = fullfile(pwd, "docs", "livescripts");
+            if ~isfolder(targetFolder), mkdir(targetFolder); end
             for i = 1:numel(sources)
                 source = fullfile(sources(i).folder, sources(i).name);
                 [~, name] = fileparts(source);
