@@ -1,0 +1,83 @@
+name: Export live scripts
+
+# Experiment: can a live script be run and exported to markdown on a GitHub
+# Actions runner, and the result committed back, so documentation built from
+# live scripts never goes stale?
+#
+# Two things are under test:
+#   1. Whether `export` with Run=true exists and works on the Linux MATLAB
+#      that setup-matlab installs (locally it works headless, no display).
+#   2. Whether the produced markdown can be committed back to main.
+#
+# Known limitation, verified locally: `export` does NOT fail when the script
+# errors — it embeds the error text as output and returns normally. So in a
+# real project the tests that run the live scripts must gate this job; the
+# export itself is not a check.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'livescripts/**'
+      - '.github/workflows/export-livescripts.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  export:
+    name: Export live scripts to markdown
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          cache: true
+
+      - name: Export every live script, running it first
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath(fullfile(pwd, "code"));
+            fprintf("export resolves to: %s\n", which("export"));
+            sources = dir(fullfile("livescripts", "*.mlx"));
+            assert(~isempty(sources), "No live scripts found");
+            for i = 1:numel(sources)
+                source = fullfile(sources(i).folder, sources(i).name);
+                [~, name] = fileparts(source);
+                target = fullfile(pwd, "docs", "livescripts", name + ".md");
+                fprintf("Exporting %s -> %s\n", sources(i).name, target);
+                export(source, target, Run=true);
+            end
+            disp("Export finished")
+
+      - name: Show what was produced
+        run: |
+          ls -la docs/livescripts/
+          echo "-----"
+          cat docs/livescripts/*.md
+
+      # Same shape as the badge commit in openMINDS_MATLAB. The push trigger
+      # is scoped to livescripts/**, and this commit touches docs/**, so it
+      # cannot retrigger itself; [skip actions] is belt and braces.
+      - name: Commit exported markdown if changed
+        run: |
+          git config user.name "${{ github.workflow }} by ${{ github.actor }}"
+          git config user.email "${{ secrets.COMMIT_EMAIL_ADDRESS }}"
+          git fetch
+
+          if [[ $(git add docs/livescripts/* --dry-run | wc -l) -gt 0 ]]; then
+            git add docs/livescripts/*
+            git commit -m "docs: export live scripts to markdown [skip actions]"
+            git push
+          else
+            echo "Nothing to commit"
+          fi
