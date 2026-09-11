@@ -1,6 +1,8 @@
 name: Find warning ID for system_dependent('getuserworkfolder')
 
 on:
+  push:
+    branches: [find-system-dependent-warning-id]
   workflow_dispatch:
     inputs:
       matlab_release:
