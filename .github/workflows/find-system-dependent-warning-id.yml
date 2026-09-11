@@ -16,10 +16,10 @@ jobs:
     name: Find warning ID
     runs-on: ubuntu-latest
     steps:
-      - name: Set up MATLAB (${{ inputs.matlab_release }})
+      - name: Set up MATLAB (${{ inputs.matlab_release || 'latest' }})
         uses: matlab-actions/setup-matlab@v3
         with:
-          release: ${{ inputs.matlab_release }}
+          release: ${{ inputs.matlab_release || 'latest' }}
 
       - name: Report Code Analyzer and runtime warning IDs
         uses: matlab-actions/run-command@v2
