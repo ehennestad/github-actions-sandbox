@@ -1,0 +1,63 @@
+name: Find warning ID for system_dependent('getuserworkfolder')
+
+on:
+  workflow_dispatch:
+    inputs:
+      matlab_release:
+        description: 'MATLAB release to use (e.g. latest, R2025a)'
+        required: false
+        type: string
+        default: 'latest'
+
+jobs:
+  find-warning-id:
+    name: Find warning ID
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up MATLAB (${{ inputs.matlab_release }})
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: ${{ inputs.matlab_release }}
+
+      - name: Report Code Analyzer and runtime warning IDs
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            fprintf('MATLAB version: %s\n', version)
+
+            %% Code Analyzer message ID for the line
+            % Write the line to a temporary function file so checkcode can analyse it
+            % exactly as it would appear in a user's code.
+            tempFolder = tempname;
+            mkdir(tempFolder)
+            cleanupObj = onCleanup(@() rmdir(tempFolder, "s"));
+            filePath = fullfile(tempFolder, "probeSystemDependent.m");
+            fileText = [ ...
+                "function oldUserPath = probeSystemDependent()", ...
+                "    oldUserPath = system_dependent('getuserworkfolder');", ...
+                "end"];
+            writelines(fileText, filePath)
+
+            messages = checkcode(filePath, "-id");
+            if isempty(messages)
+                disp("Code Analyzer: no messages for this line.")
+            else
+                fprintf('Code Analyzer reported %d message(s):\n', numel(messages))
+                for i = 1:numel(messages)
+                    fprintf('  ID: %-12s  Line %d  %s\n', ...
+                        messages(i).id, messages(i).line, messages(i).message)
+                end
+            end
+
+            %% Runtime warning ID from executing the call
+            lastwarn("")
+            warning("on", "all")
+            oldUserPath = system_dependent('getuserworkfolder');
+            fprintf('Returned value: "%s"\n', oldUserPath)
+            [warningMessage, warningId] = lastwarn();
+            if isempty(warningId) && isempty(warningMessage)
+                disp("Runtime: the call produced no warning.")
+            else
+                fprintf('Runtime warning ID: "%s"\n', warningId)
+                fprintf('Runtime warning message: "%s"\n', warningMessage)
+            end
