@@ -1,0 +1,81 @@
+name: Debug openMINDS File Exchange install path
+
+# Reproduces the dependency install of openminds-kg-sync's test workflow
+# and reports whether the openMINDS model types end up on the search path.
+
+on:
+  push:
+    branches: debug-openminds-fex-path
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    name: Diagnose openMINDS install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out openminds-kg-sync
+        uses: actions/checkout@v6
+        with:
+          repository: ehennestad/openminds-kg-sync
+          path: openminds-kg-sync
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: latest
+          cache: true
+
+      - name: Install MatBox
+        uses: ehennestad/matbox-actions/install-matbox@v1.8
+        with:
+          version: latest
+
+      - name: Install requirements and inspect the path in the same session
+        uses: matlab-actions/run-command@v3
+        with:
+          command: |
+            fprintf("MATLAB %s\n", version);
+            fprintf("userpath: ""%s""\n", userpath);
+            matbox.installRequirements(fullfile(pwd, "openminds-kg-sync"));
+            addonTable = matlab.addons.installedAddons();
+            disp(addonTable);
+            omPathEntries = string(strsplit(path, pathsep));
+            omPathEntries = omPathEntries(contains(omPathEntries, "openMINDS", "IgnoreCase", true));
+            fprintf("openMINDS path entries (%d):\n", numel(omPathEntries));
+            fprintf("  %s\n", omPathEntries);
+            fprintf("which openminds.toolboxdir: %s\n", which("openminds.toolboxdir"));
+            fprintf("which openminds.enum.Types: %s\n", which("openminds.enum.Types"));
+            fprintf("which openminds.core.Person: %s\n", which("openminds.core.Person"));
+            toolboxFolder = openminds.toolboxdir();
+            fprintf("openminds.toolboxdir(): %s\n", toolboxFolder);
+            generatedFolder = fullfile(toolboxFolder, "generated", "resources");
+            fprintf("generated/resources exists: %d\n", isfolder(generatedFolder));
+            if isfolder(generatedFolder)
+                versionListing = dir(generatedFolder);
+                fprintf("  %s\n", string({versionListing.name}));
+                latestListing = dir(fullfile(generatedFolder, "latest"));
+                fprintf("  latest/: %s\n", strjoin(string({latestListing.name}), ", "));
+                typeFiles = dir(fullfile(generatedFolder, "latest", "types", "**", "*.m"));
+                fprintf("  latest/types .m files: %d\n", numel(typeFiles));
+            end
+            try
+                fprintf("openminds.version(): %s\n", openminds.version());
+            catch versionError
+                fprintf("openminds.version() failed: %s\n", versionError.message);
+            end
+
+      - name: Inspect the path in a new session
+        if: always()
+        uses: matlab-actions/run-command@v3
+        with:
+          command: |
+            omPathEntries = string(strsplit(path, pathsep));
+            omPathEntries = omPathEntries(contains(omPathEntries, "openMINDS", "IgnoreCase", true));
+            fprintf("openMINDS path entries (%d):\n", numel(omPathEntries));
+            fprintf("  %s\n", omPathEntries);
+            fprintf("which openminds.enum.Types: %s\n", which("openminds.enum.Types"));
+            try
+                fprintf("openminds.version(): %s\n", openminds.version());
+            catch versionError
+                fprintf("openminds.version() failed: %s\n", versionError.message);
+            end
