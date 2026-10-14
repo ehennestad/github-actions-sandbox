@@ -1,0 +1,64 @@
+name: Check skipped needs conditions
+
+# Which jobs run after a job they need is skipped, and what a fetch-depth 2 checkout of a merge commit holds.
+# Mirrors ehennestad/ebrains-curation-platform ci.yml, where `changes` runs only on pull requests.
+on:
+  push:
+    branches: [check-skipped-needs-conditions]
+
+jobs:
+  changes:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.areas.outputs.backend }}
+    steps:
+      - id: areas
+        run: echo "backend=true" >> "$GITHUB_OUTPUT"
+
+  # Expected to run: the push branch of the condition holds.
+  backend:
+    needs: changes
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "changes result=${{ needs.changes.result }} backend output='${{ needs.changes.outputs.backend }}'"
+
+  # Expected to be skipped: the condition reads only the output, which is empty when `changes` is skipped.
+  backend-output-only:
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "ran"
+
+  # Expected to run: the condition checks the direct dependency's result.
+  badge-explicit:
+    needs: backend
+    if: >-
+      ${{ !cancelled() && needs.backend.result == 'success'
+      && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "backend result=${{ needs.backend.result }}"
+
+  # The question: is this skipped because `changes`, further up the chain, was skipped?
+  badge-default:
+    needs: backend
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "ran"
+
+  merge-commit-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - run: |
+          git log --graph --oneline -5
+          echo "--- HEAD^1..HEAD"
+          git diff --name-only HEAD^1 HEAD
+          echo "--- changed-areas.sh"
+          .github/scripts/changed-areas.sh HEAD^1 HEAD
