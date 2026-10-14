@@ -52,3 +52,4 @@ done <<< "$paths"
 echo "backend=$backend"
 echo "frontend=$frontend"
 echo "api=$api"
+# probe
