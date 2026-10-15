@@ -1,0 +1,50 @@
+name: Dump stack payload (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      update_badges:
+        type: boolean
+        default: true
+
+jobs:
+  test:
+    name: Evaluate badge push gating
+    runs-on: ubuntu-latest
+    env:
+      SHOULD_CREATE_BADGES: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && !github.event.pull_request.draft) }}
+      SHOULD_PUSH_BADGES: ${{ inputs.update_badges && (github.event_name == 'push' || (github.event_name == 'pull_request' && !github.event.pull_request.draft && github.event.pull_request.head.repo.full_name == github.repository && (github.event.pull_request.stack == null || github.event.pull_request.stack.position == github.event.pull_request.stack.size))) }}
+    steps:
+      - name: Dump payload
+        env:
+          STACK_JSON: ${{ toJSON(github.event.pull_request.stack) }}
+          ACTION: ${{ github.event.action }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.base_ref }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          DRAFT: ${{ github.event.pull_request.draft }}
+        run: |
+          echo "STACK_JSON=$STACK_JSON"
+          stack_line=$(echo "$STACK_JSON" | tr -d '\n ')
+          echo "RESULT pr=#$PR_NUMBER action=$ACTION draft=$DRAFT base_ref=$BASE_REF pr_base_ref=$PR_BASE_REF create=$SHOULD_CREATE_BADGES push=$SHOULD_PUSH_BADGES stack=$stack_line"
+
+  badges_current:
+    name: Evaluate badge freshness gating
+    needs: test
+    if: ${{ always() && github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check badge freshness
+        shell: bash
+        run: |
+          if [[ "${{ github.event.pull_request.draft }}" == "true" ]]; then
+            echo "FRESHNESS pr=#${{ github.event.pull_request.number }} outcome=skip-draft"
+            exit 0
+          fi
+
+          if [[ "${{ github.event.pull_request.stack != null && github.event.pull_request.stack.position < github.event.pull_request.stack.size }}" == "true" ]]; then
+            echo "FRESHNESS pr=#${{ github.event.pull_request.number }} outcome=skip-below-stack-top"
+            exit 0
+          fi
+
+          echo "FRESHNESS pr=#${{ github.event.pull_request.number }} outcome=checked"

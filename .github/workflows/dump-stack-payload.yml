@@ -1,0 +1,12 @@
+name: Dump stack payload
+
+# Records the stacked pull request payload and evaluates the badge gating
+# expressions planned for matbox-actions, through a reusable workflow so the
+# github context is the one a called workflow sees.
+
+on:
+  pull_request:
+
+jobs:
+  dump:
+    uses: ./.github/workflows/dump-stack-payload-reusable.yml
