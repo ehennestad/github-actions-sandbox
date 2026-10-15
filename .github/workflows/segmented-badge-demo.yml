@@ -1,0 +1,65 @@
+name: Segmented code issues badge demo
+
+on:
+  push:
+    branches: [ demo-segmented-code-issues-badge ]
+    paths-ignore:
+      - '.github/badges/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render_badge:
+    name: Check code and render badges
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out demo branch
+        uses: actions/checkout@v6
+
+      # install-matbox installs releases or the latest commit on main only,
+      # so the MatBox pull request branch is checked out and put on the path.
+      - name: Check out MatBox with per-severity badge counts
+        uses: actions/checkout@v6
+        with:
+          repository: ehennestad/MatBox
+          ref: add-code-issue-counts-to-badge-json
+          path: .matbox
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: latest
+
+      - name: Put MatBox on the MATLAB path
+        uses: matlab-actions/run-command@v3
+        with:
+          command: |
+            addpath(genpath(fullfile(pwd, ".matbox", "code")));
+            savepath();
+            disp(which("matbox.tasks.codecheckToolbox"))
+
+      - name: Check code and render the segmented badge
+        uses: ehennestad/matbox-actions/check-code@add-segmented-code-issues-badge
+        with:
+          source_directory: src
+          tools_directory: src
+          create_badge: 'true'
+          segmented_code_issues_badge: 'true'
+
+      - name: Render the single badge for comparison
+        shell: bash
+        run: |
+          jsonFile=docs/reports/badges/code_issues.json
+          cat "$jsonFile"
+          npx --yes --package badge-maker@6.0.0 badge \
+            "$(jq -r '.label' "$jsonFile")" "$(jq -r '.message' "$jsonFile")" ":$(jq -r '.color' "$jsonFile")" \
+            > .github/badges/code_issues_single.svg
+
+      - name: Commit badges to the demo branch
+        uses: ehennestad/matbox-actions/push-badges@main
+        with:
+          pr-ref: ${{ github.ref_name }}
+          pr-repo: ${{ github.repository }}
