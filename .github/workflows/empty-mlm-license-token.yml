@@ -1,0 +1,39 @@
+name: Empty MLM_LICENSE_TOKEN in a public repo
+
+# Question: does run-command still start MATLAB in a public repo when
+# MLM_LICENSE_TOKEN is set to an empty string (what an omitted optional
+# secret in a reusable workflow evaluates to)?
+
+on:
+  push:
+    branches: [empty-mlm-license-token]
+  workflow_dispatch:
+
+jobs:
+  empty_token:
+    runs-on: ubuntu-latest
+    env:
+      MLM_LICENSE_TOKEN: ${{ secrets.SECRET_THAT_DOES_NOT_EXIST }}
+    steps:
+      - name: Show whether MLM_LICENSE_TOKEN is set and its length
+        run: |
+          if [ -z "${MLM_LICENSE_TOKEN+x}" ]; then echo "unset"; else echo "set, length ${#MLM_LICENSE_TOKEN}"; fi
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+
+      - name: Start MATLAB
+        uses: matlab-actions/run-command@v3
+        with:
+          command: disp(version); disp(getenv("MLM_LICENSE_TOKEN") == "")
+
+  control_no_token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+
+      - name: Start MATLAB
+        uses: matlab-actions/run-command@v3
+        with:
+          command: disp(version)
